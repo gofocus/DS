@@ -2,27 +2,31 @@
 // Created by go_fo on 2019/8/1.
 //
 
-#include <stdio.h>
+#include <cstdio>
 #include <malloc.h>
 
 
 typedef struct Node {
     int data;
     struct Node *pNext;
-}Node, *PNode;
+} Node, *PNode;
 
 PNode create_list();
-void traverse_list(PNode);
-bool is_empty(PNode);
-int length_list(PNode);
-bool insert_list(PNode);
 
-bool delete_list(PNode, int, int);
+void traverse_list(PNode);
+
+bool is_empty(PNode);
+
+int length_list(PNode);
+
+bool insert_list(PNode, int, int);
+
+bool delete_list(PNode, int, int*);
+
 void sort_list(PNode);
 
 
-int main()
-{
+int main() {
     PNode pHead = nullptr;
     pHead = create_list();
     sort_list(pHead);
@@ -33,11 +37,19 @@ int main()
     }
     printf("链表长度为%d\n", length_list(pHead));
 
+    insert_list(pHead, -1, 123);
+    printf("插入后");
+    traverse_list((pHead));
+
+    int *i = nullptr;
+    delete_list(pHead, 3, i);
+    printf("删除后");
+    traverse_list((pHead));
+
     return 0;
 }
 
-PNode create_list()
-{
+PNode create_list() {
     int len;
     int i;
     int val;
@@ -45,14 +57,14 @@ PNode create_list()
     printf("输入要创建的节点的个数:");
     scanf("%d", &len);
 
-    PNode pHead = (PNode)malloc(sizeof(Node));
+    PNode pHead = (PNode) malloc(sizeof(Node));
     PNode pTail = pHead;
     pTail->pNext = nullptr;
 
     for (i = 0; i < len; i++) {
         printf("输入第%d个节点的值", i + 1);
         scanf("%d", &val);
-        Node *pNew = (Node*)malloc(sizeof(Node));
+        Node *pNew = (Node *) malloc(sizeof(Node));
         pNew->data = val;
         pNew->pNext = nullptr;
 
@@ -79,8 +91,7 @@ bool is_empty(PNode pNode) {
 
 int length_list(PNode pNode) {
     int len = 0;
-    while (pNode->pNext != nullptr)
-    {
+    while (pNode->pNext != nullptr) {
         len++;
         pNode = pNode->pNext;
     }
@@ -108,12 +119,34 @@ void sort_list(PNode pHead) {
     }
 };
 
-bool insert_list(PNode pNode) {
+bool insert_list(PNode pNode, int pos, int val) {
+    int len = length_list(pNode);
+    if (pos > len || pNode == nullptr) return false;
 
-    return false;
+    int i = 0;
+    PNode tmp = pNode;
+    for (i = 1; i < pos; ++i) {
+        tmp = tmp->pNext;
+    }
+    auto newNode = (PNode) malloc(sizeof(pNode));
+    newNode->pNext = tmp->pNext;
+    newNode->data = val;
+    tmp->pNext = newNode;
+    return true;
 };
 
-bool delete_list(PNode pNode, int i,int j) {
+bool delete_list(PNode pNode, int pos, int *val) {
+    int len = length_list(pNode);
+    if (pos > len || pNode == nullptr) return false;
+
+    int i = 0;
+    PNode tmp = pNode;
+    for (i = 1; i < pos; ++i) {
+        tmp = tmp->pNext;
+    }
+    PNode toDelete = tmp->pNext;
+    tmp->pNext = toDelete->pNext;
+    free(toDelete);
 
     return false;
 };
